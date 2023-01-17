@@ -1,4 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:chat_app/models/user_model.dart';
+import 'package:chat_app/pages/home.dart';
 import 'package:chat_app/pages/sign_up.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,12 +16,55 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  checkValues() {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    if (email == "" || password == "") {
+      print("please fill all the fields!");
+    } else {
+      login(email, password);
+    }
+  }
+
+  login(String email, String password) async {
+    UserCredential? credential;
+
+    try {
+      credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+    }
+    if (credential != null) {
+      String uid = credential.user!.uid;
+      DocumentSnapshot userData =
+          await FirebaseFirestore.instance.collection("Users").doc(uid).get();
+
+      UserModel userModel =
+          UserModel.fromMap(userData.data() as Map<String, dynamic>);
+
+      // Go to home page
+
+      print("log in succesfull");
+
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) {
+          return HomePage(
+              userModel: userModel, firebaseUser: credential!.user!);
+        },
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 40),
+        padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Center(
           child: SingleChildScrollView(
               child: Column(
@@ -27,26 +76,32 @@ class _LoginState extends State<Login> {
                     fontSize: 40,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               TextField(
-                decoration: InputDecoration(labelText: "Enter Your Email"),
+                controller: emailController,
+                decoration:
+                    const InputDecoration(labelText: "Enter Your Email"),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               TextField(
+                controller: passwordController,
                 obscureText: true,
-                decoration: InputDecoration(labelText: "Enter Your Password"),
+                decoration:
+                    const InputDecoration(labelText: "Enter Your Password"),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               CupertinoButton(
                   color: Theme.of(context).colorScheme.secondary,
-                  child: Text("Login"),
-                  onPressed: () {})
+                  child: const Text("Login"),
+                  onPressed: () {
+                    checkValues();
+                  })
             ],
           )),
         ),
@@ -54,17 +109,17 @@ class _LoginState extends State<Login> {
       bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
+          const Text(
             "Don't have an account?",
             style: TextStyle(fontSize: 16),
           ),
           CupertinoButton(
-              child: Text("Sign up"),
+              child: const Text("Sign up"),
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SignUp(),
+                      builder: (context) => const SignUp(),
                     ));
               })
         ],
