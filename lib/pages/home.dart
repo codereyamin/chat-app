@@ -1,4 +1,5 @@
 import 'package:chat_app/models/user_model.dart';
+import 'package:chat_app/pages/searchPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,15 @@ class _HomePageState extends State<HomePage> {
         children: [],
       )),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchPage(
+                    userModel: widget.userModel,
+                    firebaseUser: widget.firebaseUser),
+              ));
+        },
         child: const Icon(Icons.search),
       ),
     );
