@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:chat_app/models/ui_helper.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/pages/home.dart';
 import 'package:chat_app/pages/sign_up.dart';
@@ -23,7 +24,9 @@ class _LoginState extends State<Login> {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
     if (email == "" || password == "") {
-      print("please fill all the fields!");
+      // print("please fill all the fields!");
+      UIHelper.showAlertDilog(
+          context, "Incomplete Data", "Please fill all the fields!");
     } else {
       login(email, password);
     }
@@ -31,12 +34,14 @@ class _LoginState extends State<Login> {
 
   login(String email, String password) async {
     UserCredential? credential;
-
+    UIHelper.showLodingDilog(context, "Log In....");
     try {
       credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      print(e.message);
+      Navigator.pop(context);
+      UIHelper.showAlertDilog(
+          context, "An error occured", e.message.toString());
     }
     if (credential != null) {
       String uid = credential.user!.uid;
@@ -49,8 +54,8 @@ class _LoginState extends State<Login> {
       // Go to home page
 
       print("log in succesfull");
-
-      Navigator.push(context, MaterialPageRoute(
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) {
           return HomePage(
               userModel: userModel, firebaseUser: credential!.user!);

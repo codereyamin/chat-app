@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../models/ui_helper.dart';
+
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -22,9 +24,11 @@ class _SignUpState extends State<SignUp> {
     String password = passwordController.text.trim();
     String confirmPassword = confirmPasswordController.text.trim();
     if (email == "" || password == "" || confirmPassword == "") {
-      print("Please file all the fields!");
+      UIHelper.showAlertDilog(
+          context, "Incomplete Data", "Please fill all the fields!");
     } else if (password != confirmPassword) {
-      print("Password do not match");
+      UIHelper.showAlertDilog(context, "Password Mismatch ",
+          "The Password you entered do not match!");
     } else {
       signUp(email, password);
     }
@@ -32,11 +36,14 @@ class _SignUpState extends State<SignUp> {
 
   signUp(String email, String password) async {
     UserCredential? credential;
+    UIHelper.showLodingDilog(context, "Creating new Account....");
     try {
       credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseException catch (e) {
-      print(e.code.toString());
+      Navigator.pop(context);
+      UIHelper.showAlertDilog(
+          context, "An error occured", e.message.toString());
     }
     if (credential != null) {
       String uid = credential.user!.uid;

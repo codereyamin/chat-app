@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chat_app/models/ui_helper.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,13 +81,15 @@ class _CompletProfileState extends State<CompletProfile> {
   void chekvalues() {
     String fullname = fullNameController.text.trim();
     if (fullname == "" || imageFile == null) {
-      print("Please file all the fields");
+      UIHelper.showAlertDilog(context, "Incomplete Data",
+          "Please file all the fields and upload a profile picture");
     } else {
       uploadData();
     }
   }
 
   void uploadData() async {
+    UIHelper.showLodingDilog(context, "Uploading image....");
     UploadTask uploadTask = FirebaseStorage.instance
         .ref("profilepictures")
         .child(widget.userModel.uid.toString())
@@ -102,7 +105,13 @@ class _CompletProfileState extends State<CompletProfile> {
         .doc(widget.userModel.uid)
         .set(widget.userModel.toMap())
         .then((value) {
-      print("Data Uploaded!");
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(
+                userModel: widget.userModel, firebaseUser: widget.firebaseUser),
+          ));
     });
   }
 
@@ -153,7 +162,8 @@ class _CompletProfileState extends State<CompletProfile> {
               child: const Text("Submit"),
               onPressed: () {
                 chekvalues();
-                Navigator.push(context, MaterialPageRoute(
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (context) {
                     return HomePage(
                         userModel: widget.userModel,
