@@ -14,8 +14,7 @@ import 'package:image_picker/image_picker.dart';
 class CompletProfile extends StatefulWidget {
   final UserModel userModel;
   final User firebaseUser;
-  const CompletProfile(
-      {super.key, required this.userModel, required this.firebaseUser});
+  const CompletProfile({super.key, required this.userModel, required this.firebaseUser});
 
   @override
   State<CompletProfile> createState() => _CompletProfileState();
@@ -36,9 +35,9 @@ class _CompletProfileState extends State<CompletProfile> {
         aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 20);
 
-    if (cropImage != null) {
+    if (croppedImage != null) {
       setState(() {
-        imageFile = File(croppedImage!.path);
+        imageFile = File(croppedImage.path);
       });
     }
   }
@@ -81,8 +80,8 @@ class _CompletProfileState extends State<CompletProfile> {
   void chekvalues() {
     String fullname = fullNameController.text.trim();
     if (fullname == "" || imageFile == null) {
-      UIHelper.showAlertDilog(context, "Incomplete Data",
-          "Please file all the fields and upload a profile picture");
+      UIHelper.showAlertDilog(
+          context, "Incomplete Data", "Please file all the fields and upload a profile picture");
     } else {
       uploadData();
     }
@@ -109,8 +108,8 @@ class _CompletProfileState extends State<CompletProfile> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(
-                userModel: widget.userModel, firebaseUser: widget.firebaseUser),
+            builder: (context) =>
+                HomePage(userModel: widget.userModel, firebaseUser: widget.firebaseUser),
           ));
     });
   }
@@ -135,8 +134,7 @@ class _CompletProfileState extends State<CompletProfile> {
               showPhotoOption();
             },
             child: CircleAvatar(
-              backgroundImage:
-                  (imageFile != null) ? FileImage(imageFile!) : null,
+              backgroundImage: (imageFile != null) ? FileImage(imageFile!) : null,
               radius: 70,
               child: (imageFile == null)
                   ? const Icon(
@@ -165,9 +163,7 @@ class _CompletProfileState extends State<CompletProfile> {
                 Navigator.popUntil(context, (route) => route.isFirst);
                 Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (context) {
-                    return HomePage(
-                        userModel: widget.userModel,
-                        firebaseUser: widget.firebaseUser);
+                    return HomePage(userModel: widget.userModel, firebaseUser: widget.firebaseUser);
                   },
                 ));
               })

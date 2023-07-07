@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:chat_app/main.dart';
 import 'package:chat_app/models/chat_rome_model.dart';
 import 'package:chat_app/models/user_model.dart';
@@ -12,8 +10,7 @@ import 'package:flutter/material.dart';
 class SearchPage extends StatefulWidget {
   final UserModel userModel;
   final User firebaseUser;
-  const SearchPage(
-      {super.key, required this.userModel, required this.firebaseUser});
+  const SearchPage({super.key, required this.userModel, required this.firebaseUser});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -32,8 +29,7 @@ class _SearchPageState extends State<SearchPage> {
     if (snapshot.docs.length > 0) {
       // Fetch the existing one
       var docData = snapshot.docs[0].data();
-      ChartRoomModel existingChatroom =
-          ChartRoomModel.fromMap(docData as Map<String, dynamic>);
+      ChartRoomModel existingChatroom = ChartRoomModel.fromMap(docData as Map<String, dynamic>);
       chatRoom = existingChatroom;
     } else {
       // create a new one
@@ -97,8 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                     UserModel searchUser = UserModel.fromMap(userMap);
                     return ListTile(
                       onTap: () async {
-                        ChartRoomModel? chatRoomModel =
-                            await getChatRoomModel(searchUser);
+                        ChartRoomModel? chatRoomModel = await getChatRoomModel(searchUser);
                         if (chatRoomModel != null) {
                           Navigator.pop(context);
                           Navigator.push(

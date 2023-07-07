@@ -1,6 +1,7 @@
 import 'package:chat_app/firebase/firebaseHelper.dart';
 import 'package:chat_app/models/chat_rome_model.dart';
 import 'package:chat_app/models/ui_helper.dart';
+
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/pages/chat_room_page.dart';
 import 'package:chat_app/pages/searchPage.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
                 onPressed: () async {
+                  UIHelper.showLodingDilog(context, "Signout....");
                   await FirebaseAuth.instance.signOut();
                 },
                 icon: const Icon(Icons.exit_to_app))
